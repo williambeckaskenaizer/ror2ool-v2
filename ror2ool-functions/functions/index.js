@@ -1,54 +1,31 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions");
+const express = require("express");
+const firebase = require("firebase");
 
-
-admin.initializeApp();
-
-const express = require('express');
 const app = express();
 
-app.get('/survivors', (req, res) => {
-    admin
-    .firestore()
-    .collection('survivors')
-    .orderBy('name', 'asc')
-    .get()
-    .then((data) => {
-        let survivors = [];
-        data.forEach((doc) => {
-            survivors.push({
-                survivorId: doc.id,
-                ...doc.data()
-            });
-        });
-        return res.json(survivors);
-    })
-    .catch(err => console.error(err));
-})
+const { getAllItems, addItem } = require("./handlers/items");
+const { getAllSurvivors, addSurvivor } = require("./handlers/survivors");
+const { getAllEnemies, addEnemy } = require("./handlers/enemies");
+const { getAllChests, addChest } = require("./handlers/chests");
+const { firebaseConfig } = require("./util/config");
 
-app.post('/survivor', (req, res) => {
-    const newSurvivor = {
-        name: req.body.name,
-        health: req.body.health,
-        healthRegen: req.body.healthRegen,
-        damage: req.body.damage,
-        speed: req.body.speed,
-        armor: req.body.armor,
-        unlock: req.body.unlock
-    };
-    admin
-    .firestore()
-    .collection('survivors')
-    .add(newSurvivor)
-    .then(doc => {
-        res.json({ message: `document ${doc.id} created successfully`})
-    })
-    .catch(err => {
-        res.status(500).json({error: 'something went wrong uwu'});
-        console.error(err)
-    });
-});
+firebase.initializeApp(firebaseConfig);
 
-//
+//Survivor routes
+app.get("/survivors", getAllSurvivors);
+app.post("/add-survivor", addSurvivor);
+
+//Item routes
+app.get("/items", getAllItems);
+app.post("/add-item", addItem);
+
+//Enemy routes
+app.get("/enemies", getAllEnemies);
+app.post("/add-enemy", addEnemy);
+
+//Chest routes
+app.get("/chests", getAllChests);
+app.post("/add-chest", addChest);
 
 exports.api = functions.https.onRequest(app);
