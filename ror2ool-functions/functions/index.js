@@ -1,8 +1,10 @@
 const functions = require("firebase-functions");
 const express = require("express");
+const cors = require('cors');
 const firebase = require("firebase");
 
 const app = express();
+app.use(cors());
 
 const { getAllItems, addItem } = require("./handlers/items");
 const { getAllSurvivors, addSurvivor } = require("./handlers/survivors");

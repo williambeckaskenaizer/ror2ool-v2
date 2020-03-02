@@ -23,6 +23,7 @@ exports.getAllSurvivors = (req, res) => {
 exports.addSurvivor = (req, res) => {
 
   const newSurvivor = {
+      imageUrl: req.body.imageUrl,
       name: req.body.name,
       health: req.body.health,
       healthRegen: req.body.healthRegen,
@@ -31,6 +32,8 @@ exports.addSurvivor = (req, res) => {
       armor: req.body.armor,
       unlock: req.body.unlock,
     };
+
+    const noImg = 'image-missing.png'
 
     db.collection("survivors")
       .add(newSurvivor)
